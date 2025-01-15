@@ -4,8 +4,12 @@
 
 ## Updates
 
-- 2025-01-14: Add Metrics
-- 2025-01-14: Update `eval.py`
+- 2025-01-15：
+	- Modify `core/base_network.py` (Can handle parameters more flexibly)
+
+- 2025-01-14：
+	- Add Metrics
+	- Update `eval.py`
 
 ## Brief
 

@@ -1,9 +1,10 @@
 import torch.nn as nn
 class BaseNetwork(nn.Module):
-  def __init__(self, init_type='kaiming', gain=0.02):
+  def __init__(self, init_type='kaiming', gain=0.02, **kwargs):
     super(BaseNetwork, self).__init__()
     self.init_type = init_type
     self.gain = gain
+    self.kwargs = kwargs
 
   def init_weights(self):
     """
