@@ -13,11 +13,20 @@ from torchvision.models.inception import inception_v3
 import numpy as np
 from scipy.stats import entropy
 
+_l1_loss = nn.L1Loss()
 
 def mae(input, target):
+    """Calculate Mean Absolute Error.
+    
+    Args:
+        input (torch.Tensor): Input tensor
+        target (torch.Tensor): Target tensor
+    
+    Returns:
+        float: MAE value
+    """
     with torch.no_grad():
-        loss = nn.L1Loss()
-        output = loss(input, target)
+        output = _l1_loss(input, target)
     return output
 
 
@@ -108,10 +117,22 @@ def tensor2img(tensor, out_type=np.uint8, min_max=(0, 1)):
     return img_np.astype(out_type)
 
 
-def load_image(image_path):
-    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+def load_image(image_path, grayscale=False):
+    """Load an image with OpenCV.
+    
+    Args:
+        image_path (str): Path to the image
+        grayscale (bool): If True, load as grayscale
+    
+    Returns:
+        numpy.ndarray: Loaded image
+    """
+    if grayscale:
+        img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    else:
+        img = cv2.imread(image_path, cv2.IMREAD_COLOR)
     if img is None:
-        raise ValueError("Image not found or the format is not supported.")
+        raise ValueError(f"Image not found or format not supported: {image_path}")
     return img
 
 
@@ -166,7 +187,7 @@ def cal_ssim(img1, img2):
         if img1.shape[2] == 3:
             ssims = []
             for i in range(3):
-                ssims.append(ssim(img1, img2))
+                ssims.append(ssim(img1[:,:,i], img2[:,:,i]))
             return np.array(ssims).mean()
         elif img1.shape[2] == 1:
             return ssim(np.squeeze(img1), np.squeeze(img2))
@@ -175,28 +196,60 @@ def cal_ssim(img1, img2):
 
 
 def cal_psnr_folder(folder1, folder2):
-    psnr_values = []
+    """Calculate PSNR for all images in two folders.
+    
+    Args:
+        folder1 (str): Path to first folder
+        folder2 (str): Path to second folder
+    
+    Returns:
+        list: PSNR values for each image pair
+    """
     filenames1 = sorted(os.listdir(folder1))
     filenames2 = sorted(os.listdir(folder2))
-
+    
+    if len(filenames1) != len(filenames2):
+        raise ValueError(f"Folders contain different numbers of images: {len(filenames1)} vs {len(filenames2)}")
+    
+    psnr_values = []
     for file1, file2 in zip(filenames1, filenames2):
         img1_path = os.path.join(folder1, file1)
         img2_path = os.path.join(folder2, file2)
-        img1 = load_image(img1_path)
-        img2 = load_image(img2_path)
-        psnr_values.append(cal_psnr(img1, img2))
+        try:
+            img1 = load_image(img1_path, grayscale=True)
+            img2 = load_image(img2_path, grayscale=True)
+            psnr_values.append(cal_psnr(img1, img2))
+        except Exception as e:
+            print(f"Error processing {file1} and {file2}: {str(e)}")
+            continue
     return psnr_values
 
 
 def cal_ssim_folder(folder1, folder2):
-    ssim_values = []
+    """Calculate SSIM for all images in two folders.
+    
+    Args:
+        folder1 (str): Path to first folder
+        folder2 (str): Path to second folder
+    
+    Returns:
+        list: SSIM values for each image pair
+    """
     filenames1 = sorted(os.listdir(folder1))
     filenames2 = sorted(os.listdir(folder2))
-
+    
+    if len(filenames1) != len(filenames2):
+        raise ValueError(f"Folders contain different numbers of images: {len(filenames1)} vs {len(filenames2)}")
+    
+    ssim_values = []
     for file1, file2 in zip(filenames1, filenames2):
         img1_path = os.path.join(folder1, file1)
         img2_path = os.path.join(folder2, file2)
-        img1 = load_image(img1_path)
-        img2 = load_image(img2_path)
-        ssim_values.append(cal_ssim(img1, img2))
+        try:
+            img1 = load_image(img1_path, grayscale=True)
+            img2 = load_image(img2_path, grayscale=True)
+            ssim_values.append(cal_ssim(img1, img2))
+        except Exception as e:
+            print(f"Error processing {file1} and {file2}: {str(e)}")
+            continue
     return ssim_values

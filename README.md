@@ -4,6 +4,9 @@
 
 ## Updates
 
+- 2025-01-16:
+	- Modify `models/metric.py`
+
 - 2025-01-15：
 	- Modify `core/base_network.py` (Can handle parameters more flexibly)
 
