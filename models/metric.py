@@ -8,7 +8,6 @@ import os
 import math
 import cv2
 from torchvision.utils import make_grid
-
 from torchvision.models.inception import inception_v3
 
 import numpy as np
@@ -102,13 +101,10 @@ def tensor2img(tensor, out_type=np.uint8, min_max=(0, 1)):
         img_np = tensor.numpy()
     else:
         raise TypeError(
-            "Only support 4D, 3D and 2D tensor. But received with dimension: {:d}".format(
-                n_dim
-            )
+            "Only support 4D, 3D and 2D tensor. But received with dimension: {:d}".format(n_dim)
         )
     if out_type == np.uint8:
         img_np = (img_np * 255.0).round()
-        # Important. Unlike matlab, numpy.unit8() WILL NOT round by default.
     return img_np.astype(out_type)
 
 
@@ -158,10 +154,6 @@ def ssim(img1, img2):
 
 
 def cal_ssim(img1, img2):
-    """calculate SSIM
-    the same outputs as MATLAB's
-    img1, img2: [0, 255]
-    """
     if isinstance(img1, torch.Tensor):
         img1 = tensor2img(img1)
     if isinstance(img2, torch.Tensor):
