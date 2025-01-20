@@ -4,15 +4,9 @@
 
 ## Updates
 
-- 2025-01-16:
-	- Modify `models/metric.py`
-
-- 2025-01-15：
-	- Modify `core/base_network.py` (Can handle parameters more flexibly)
-
-- 2025-01-14：
-	- Add Metrics
-	- Update `eval.py`
+- Modify `models/metric.py`
+- Modify `core/base_network.py` (Can handle parameters more flexibly)
+- Update `eval.py`
 
 ## Brief
 
