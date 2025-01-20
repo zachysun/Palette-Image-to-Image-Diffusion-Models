@@ -90,7 +90,7 @@ def inception_score(imgs, cuda=True, batch_size=32, resize=False, splits=1):
     return np.mean(split_scores), np.std(split_scores)
 
 
-def tensor2img(tensor, out_type=np.uint8, min_max=(0, 1)):
+def tensor2img(tensor, out_type=np.uint8, min_max=(-1, 1)):
     """
     Converts a torch Tensor into an image Numpy array
     Input: 4D(B,(3/1),H,W), 3D(C,H,W), or 2D(H,W), any range, RGB channel order
